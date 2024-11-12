@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { postData } from "@/libs/helpers";
 import toast from "react-hot-toast";
 import Button from "@/components/Button";
-import SubscribeModal from "@/components/SubscribeModal";
 
 const AccountContent = () => {
     const router = useRouter();
