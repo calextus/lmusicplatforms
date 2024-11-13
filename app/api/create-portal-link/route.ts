@@ -29,8 +29,13 @@ export async function POST() {
         });
 
         return NextResponse.json({ url });
-    } catch (error: any) {
-        console.log(error);
-        return new NextResponse('Internal Error', { status: 500 });
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.log(error.message);
+            return new NextResponse('Internal Error', { status: 500 });
+        } else {
+            console.log("An unknown error occurred.");
+            return new NextResponse('Internal Error', { status: 500 });
+        }
     }
 };

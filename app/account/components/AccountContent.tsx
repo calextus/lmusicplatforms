@@ -24,30 +24,27 @@ const AccountContent = () => {
     const redirectToCustomerPortal = async () => {
         setLoading(true);
         try {
-            const { url, error } = await postData({
+            const { url } = await postData({
                 url: '/api/create-portal-link'
             });
             window.location.assign(url);
         } catch (error) {
-            if (error) {
-                toast.error((error as Error).message);
-            }
+            toast.error((error as Error).message);
         }
-       setLoading(false);
-    }
+        setLoading(false);
+    };
 
     return (
         <div className="mb-7 px-6">
             {!subscription && (
                 <div className="flex flex-col gap-y-4">
-                   <p>No active plan.
-                    </p> 
-                   <Button
-                   onClick={subscribeModal.onOpen}
-                   className="w-[300px]"
-                   >
-                    Subscribe
-                   </Button>
+                    <p>No active plan.</p>
+                    <Button
+                        onClick={subscribeModal.onOpen}
+                        className="w-[300px]"
+                    >
+                        Subscribe
+                    </Button>
                 </div>
             )}
             {subscription && (
@@ -56,16 +53,16 @@ const AccountContent = () => {
                         You are currently on the <b>{subscription?.prices?.products?.name}</b> Plan
                     </p>
                     <Button
-                    disabled={loading || isLoading}
-                    onClick={redirectToCustomerPortal}
-                    className="w-[300px]"
+                        disabled={loading || isLoading}
+                        onClick={redirectToCustomerPortal}
+                        className="w-[300px]"
                     >
                         Open customer portal
                     </Button>
                 </div>
             )}
         </div>
-    )
-}
+    );
+};
 
 export default AccountContent;

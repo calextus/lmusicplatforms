@@ -9,7 +9,7 @@ import {
     manageSubscriptionStatusChange
 } from "@/libs/supabaseAdmin";
 
-const relevantEvents = new Set ([
+const relevantEvents = new Set([
     'product.created',
     'product.updated',
     'price.created',
@@ -25,16 +25,20 @@ export async function POST(
 ) {
     const body = await request.text();
     const sig = headers().get('Stripe-Signature');
-
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
     let event: Stripe.Event;
 
-    try{
+    try {
         if (!sig || !webhookSecret) return;
         event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-    } catch (error: any) {
-        console.log('Error message: ' + error.message);
-        return new NextResponse(`Webhook Error: ${error.message}`, {status: 400});
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.log('Error message: ' + error.message);
+            return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 });
+        } else {
+            console.log("An unknown error occurred.");
+            return new NextResponse('Webhook Error', { status: 400 });
+        }
     }
 
     if (relevantEvents.has(event.type)) {
@@ -52,7 +56,7 @@ export async function POST(
                 case 'customer.subscription.updated':
                 case 'customer.subscription.deleted':
                     const subscription = event.data.object as Stripe.Subscription;
-                      await manageSubscriptionStatusChange(
+                    await manageSubscriptionStatusChange(
                         subscription.id,
                         subscription.customer as string,
                         event.type === 'customer.subscription.created'
@@ -62,7 +66,7 @@ export async function POST(
                     const checkoutSession = event.data.object as Stripe.Checkout.Session;
                     if (checkoutSession.mode === 'subscription') {
                         const subscriptionId = checkoutSession.subscription;
-                        await manageSubscriptionStatusChange (
+                        await manageSubscriptionStatusChange(
                             subscriptionId as string,
                             checkoutSession.customer as string,
                             true
@@ -70,13 +74,18 @@ export async function POST(
                     }
                     break;
                 default:
-                    throw new Error('Unhandle relevant event!');
-            } 
-            } catch (error) {
-                console.log(error);
-                return new NextResponse( 'Webhook error', {status: 400})
+                    throw new Error('Unhandled relevant event!');
+            }
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log(error.message);
+                return new NextResponse('Webhook error', { status: 400 });
+            } else {
+                console.log("An unknown error occurred during event processing.");
+                return new NextResponse('Webhook error', { status: 400 });
+            }
         }
     }
 
-    return NextResponse.json({ received: true}, { status: 200 });
+    return NextResponse.json({ received: true }, { status: 200 });
 };
