@@ -1,4 +1,6 @@
-import { useRouter } from "next/navigation";
+"use client";  // Add this at the top of your Header.tsx
+
+import { useRouter } from "next/navigation"; // Now works because the component is a Client Component
 import { BiSearch } from "react-icons/bi";
 import { HiHome } from "react-icons/hi";
 import { RxCaretLeft, RxCaretRight } from "react-icons/rx";
@@ -9,6 +11,9 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useUser } from "@/hooks/useUser";
 import { FaUserAlt } from "react-icons/fa";
 import toast from "react-hot-toast";
+
+// Rest of your component...
+
 
 interface HeaderProps {
     children: React.ReactNode;
