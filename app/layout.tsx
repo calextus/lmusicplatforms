@@ -38,6 +38,13 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9384677470946530"
+          crossOrigin="anonymous"
+        ></script>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -45,13 +52,12 @@ export default async function RootLayout({
         <SupabaseProvider>
           <UserProvider>
             <ModalProvider products={products}/>
-        <Sidebar songs={userSongs} >
-        {children}
-        </Sidebar>
-        <Player />
-        </UserProvider>
+            <Sidebar songs={userSongs} >
+              {children}
+            </Sidebar>
+            <Player />
+          </UserProvider>
         </SupabaseProvider>
-        
       </body>
     </html>
   );
